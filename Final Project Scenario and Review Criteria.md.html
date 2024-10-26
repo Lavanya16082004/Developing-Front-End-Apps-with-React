@@ -1,0 +1,106 @@
+import React, { useState } from 'react';
+import CurrencyDropdown from './CurrencyDropdown';
+import BudgetControls from './BudgetControls';
+
+const BudgetAllocationApp = () => {
+    const [budget, setBudget] = useState(20000);
+    const [allocation, setAllocation] = useState(0);
+    const [spent, setSpent] = useState(0);
+    const [currency, setCurrency] = useState('$');
+
+    const remainingBudget = budget - spent;
+
+    const handleAllocationChange = (value) => {
+        if (!isNaN(value) && value <= remainingBudget && value >= 0) {
+            setAllocation(value);
+        }
+    };
+
+    const handleBudgetChange = (amount) => {
+        const newBudget = budget + amount;
+        if (newBudget <= 20000 && newBudget >= spent) {
+            setBudget(newBudget);
+        }
+    };
+
+    const handleCurrencyChange = (newCurrency) => {
+        setCurrency(newCurrency);
+    };
+
+    return (
+        <div>
+            <h1>Budget Allocation</h1>
+            <label>
+                Budget: {currency}{budget}
+            </label>
+            <BudgetControls
+                onIncrease={() => handleBudgetChange(10)}
+                onDecrease={() => handleBudgetChange(-10)}
+                budget={budget}
+            />
+            <label>
+                Remaining: {currency}{remainingBudget}
+            </label>
+            <label>
+                Spent So Far: {currency}{spent}
+            </label>
+            <label>
+                Allocated Budget: {currency}{allocation}
+            </label>
+            <label>
+                Change Allocation: {currency}
+                <input
+                    type="number"
+                    value={allocation}
+                    onChange={(e) => handleAllocationChange(Number(e.target.value))}
+                />
+            </label>
+            <CurrencyDropdown onChange={handleCurrencyChange} />
+        </div>
+    );
+};
+
+export default BudgetAllocationApp;
+2. Currency Dropdown Component: CurrencyDropdown.js
+javascript
+Copy code
+import React from 'react';
+
+const CurrencyDropdown = ({ onChange }) => {
+    const currencies = [
+        { symbol: '$', label: 'Dollar' },
+        { symbol: '£', label: 'Pound' },
+        { symbol: '€', label: 'Euro' },
+        { symbol: '₹', label: 'Rupee' }
+    ];
+
+    return (
+        <div>
+            <label>Currency</label>
+            <select onChange={(e) => onChange(e.target.value)}>
+                {currencies.map((currency) => (
+                    <option key={currency.symbol} value={currency.symbol}>
+                        {currency.symbol} {currency.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+};
+
+export default CurrencyDropdown;
+3. Budget Controls Component: BudgetControls.js
+javascript
+Copy code
+import React from 'react';
+
+const BudgetControls = ({ onIncrease, onDecrease, budget }) => {
+    return (
+        <div>
+            <button onClick={onIncrease}>+</button>
+            <button onClick={onDecrease}>-</button>
+        </div>
+    );
+};
+
+export default BudgetControls;
